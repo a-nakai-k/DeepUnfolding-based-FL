@@ -1,7 +1,7 @@
 # DeepUnfolding-based-FL
 Python implementation of Deep Unfolding-based Weight FederatedAveraging (DUW-FedAvg).
 
-A. Nakai-Kasai and T. Wadayama, ''Deep unfolding-based weighted averaging for federated learning under heterogeneous environments,'' submitting ICASSP 2023.
+A. Nakai-Kasai and T. Wadayama, ''Deep unfolding-based weighted averaging for federated learning under heterogeneous environments,'' submitting to ICASSP 2023.
 
 
 ## Requirement
