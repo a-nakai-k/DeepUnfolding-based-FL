@@ -4,12 +4,12 @@ Python implementation of Deep Unfolding-based Weight FederatedAveraging (DUW-Fed
 ''Deep unfolding-based weighted averaging for federated learning under heterogeneous environments,'' submitted to ICASSP 2023.
 
 
-## Requirement
+## Requirements
 - Pytorch
 - matplotlib
 - numpy
 
-## Dataset (extracted from MNIST)
+## Datasets (extracted from MNIST)
 ### for Training
 | Env. | characteristics | quantity | attached class label | epochs | communication probability | 
 | ---- | ---- | ---- | ---- | ---- | ---- |
