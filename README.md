@@ -21,6 +21,11 @@ Python implementation of Deep Unfolding-based Weight FederatedAveraging (DUW-Fed
 - 5clients_env2: Environment II containing label distribution skew. The quantity is balanced but each client only has data for specific labels.
 - 5clients_env3_4: Environment III and IV. Local data are IID and balanced.
 
+
+## Model
+3 fully connected layers
+
+
 ## Codes
 - main_env1_2.py: Code for environment I and II.
 - main_env3.py: Code for environment III containing computational capability skew. The number of epochs that can calculate during a round varies across clients.
@@ -38,4 +43,4 @@ Graduate School of Engineering, Nagoya Institute of Technology
 nakai.ayano@nitech.ac.jp
 
 ## Acknowledgment
-Datasets are extracted from MNIST by using [this repositry](https://github.com/TsingZ0/PFL-Non-IID).
+Datasets are extracted from MNIST by using [this repositry](https://github.com/TsingZ0/PFL-Non-IID) and its extension.
