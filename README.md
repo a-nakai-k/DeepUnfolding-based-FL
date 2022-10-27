@@ -10,6 +10,7 @@ Python implementation of Deep Unfolding-based Weight FederatedAveraging (DUW-Fed
 - numpy
 
 ## Dataset (extracted from MNIST)
+### for Training
 | Env. | characteristics | quantity | attached class label | epochs | communication probability | 
 | ---- | ---- | ---- | ---- | ---- | ---- |
 | I | quantity skew | 1042,1023,862,1184,4459 | all labels | 2 | perfect |
@@ -20,6 +21,9 @@ Python implementation of Deep Unfolding-based Weight FederatedAveraging (DUW-Fed
 - 5clients_env1: Environment I containing quantity skew. Local data are IID but the quantity is not balanced.
 - 5clients_env2: Environment II containing label distribution skew. The quantity is balanced but each client only has data for specific labels.
 - 5clients_env3_4: Environment III and IV. Local data are IID and balanced.
+
+### for Test
+IID balanced 2000 data for each client (total 10000 test data divided into 5 clients)
 
 
 ## Model
