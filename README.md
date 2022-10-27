@@ -1,7 +1,7 @@
 # DeepUnfolding-based-FL
 Python implementation of Deep Unfolding-based Weight FederatedAveraging (DUW-FedAvg).
 
-''Deep unfolding-based weighted averaging for federated learning under heterogeneous environments,'' submitting to ICASSP 2023.
+''Deep unfolding-based weighted averaging for federated learning under heterogeneous environments,'' submitted to ICASSP 2023.
 
 
 ## Requirement
@@ -10,6 +10,13 @@ Python implementation of Deep Unfolding-based Weight FederatedAveraging (DUW-Fed
 - numpy
 
 ## Dataset (extracted from MNIST)
+| Env | characteristics | quantity | class label | epochs | communication | 
+| ---- | ---- | ---- | ---- | ---- | ---- |
+| I | quantity skew | 1042,1023,862,1184,4459 | all labels | 2 | perfect |
+| II | label distribution skew | 6755,6774,6776,6776,6776 | 2,3,5,5,5 | 2 | perfect |
+| III | computational skew | 1713,1713,1713,1713,1716 | all labels | 2,1,1,1,1 | perfect |
+| IV | communication skew | 1713,1713,1713,1713,1716 | all labels | 2 | 0.2,0.3,0.8,0.9,1 |
+
 - 5clients_env1: Environment I containing quantity skew. Local data are IID but the quantity is not balanced.
 - 5clients_env2: Environment II containing label distribution skew. The quantity is balanced but each client only has data for specific labels.
 - 5clients_env3_4: Environment III and IV. Local data are IID and balanced.
