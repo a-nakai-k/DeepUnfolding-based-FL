@@ -10,7 +10,7 @@ Python implementation of Deep Unfolding-based Weight FederatedAveraging (DUW-Fed
 - numpy
 
 ## Dataset (extracted from MNIST)
-| Env | characteristics | quantity | class label | epochs | communication | 
+| Env. | characteristics | quantity | attached class label | epochs | communication probability | 
 | ---- | ---- | ---- | ---- | ---- | ---- |
 | I | quantity skew | 1042,1023,862,1184,4459 | all labels | 2 | perfect |
 | II | label distribution skew | 6755,6774,6776,6776,6776 | 2,3,5,5,5 | 2 | perfect |
