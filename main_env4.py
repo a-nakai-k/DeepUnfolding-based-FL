@@ -189,14 +189,14 @@ def train(datasets,model,optimizer,loop,method,modelfortheta,iscom):
             elif method=='origin':
                 ps_global.append(list(model[0].parameters())[params].data*len(train_datasets[0])/N)
             elif method=='dr':
-                ps_global.append(list(models3[0].parameters())[params].data*pk[0]*(Fk[0]**(q+1))/sumpkFk)
+                ps_global.append(list(model[0].parameters())[params].data*pk[0]*(Fk[0]**(q+1))/sumpkFk)
             for node in range(1,K):
                 if method=='du':
                     ps_global[params] += list(model[node].parameters())[params].data * modelfortheta.thetak[node][loop].data.item()**2 / sumweights
                 elif method=='origin':
                     ps_global[params] += list(model[node].parameters())[params].data*len(train_datasets[node])/N
                 elif method=='dr':
-                    ps_global[params] += list(models3[node].parameters())[params].data*pk[node]*(Fk[node]**(q+1))/sumpkFk
+                    ps_global[params] += list(model[node].parameters())[params].data*pk[node]*(Fk[node]**(q+1))/sumpkFk
         # parameter sharing
         for node in range(K):
             model[node].l1.weight.data = ps_global[0].clone()
