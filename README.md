@@ -68,4 +68,9 @@ Graduate School of Engineering, Nagoya Institute of Technology
 nakai.ayano@nitech.ac.jp
 
 ## Acknowledgment
-Datasets are extracted from MNIST by using [this repositry](https://github.com/TsingZ0/PFL-Non-IID) and its extension.
+Datasets are extracted from MNIST and Stanford Dogs datasets by using [this repositry](https://github.com/TsingZ0/PFL-Non-IID) and its extension.
+
+## References
+- T. Zhang (2021) Personalized Federated Learning Platform (Sourcecode) https://github.com/TsingZ0/PFL-Non-IID.
+- A. Khosla, N. Jayadevaprakash, B. Yao, and L. Fei-Fei, “Novel dataset for fine-grained image categorization,” in Proc. First Workshop on Fine-Grained Visual Categorization (FGVC), IEEE Conference on Computer Vision and Pattern Recognition (CVPR), Jun. 2011.
+- J. Deng, W. Dong, R. Socher, L.-J. Li, K. Li, and L. Fei-Fei, “ImageNet: A large-scale hierarchical image database,” in Proc. IEEE Computer Vision and Pattern Recognition (CVPR), Jun. 2009.
