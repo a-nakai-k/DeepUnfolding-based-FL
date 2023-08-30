@@ -131,8 +131,6 @@ class TrainDUW(nn.Module):
                         W1, b1, W2, b2, W3, b3 = W1 + weight1*weightnode, b1 + bias1*weightnode, W2 + weight2*weightnode, b2 + bias2*weightnode, W3 + weight3*weightnode, b3 + bias3*weightnode
                 outputlist.append(outputvalues)
                 targetlist.append(targetvalues)
-                if itr == T:
-                    print(self.thetak[node]**2/sumweights, flush=True)
             aveW1, aveb1, aveW2, aveb2, aveW3, aveb3 = W1, b1, W2, b2, W3, b3
             outputlists.append(outputlist)
             targetlists.append(targetlist)
@@ -292,7 +290,7 @@ plt.ylabel("learned theta", fontsize=16)
 plt.tick_params(labelsize=16)
 plt.tight_layout()
 fig2.savefig("learned_thetak.png")
-# print('Learned theta: ', learnedweights[M,:,:], flush=True)
+print('Learned theta: ', learnedweights[M,:,:], flush=True)
 
 # trajectory of weight during deep unfolding
 fig3 = plt.figure()

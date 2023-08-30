@@ -9,20 +9,17 @@ import numpy as np
 
 #%% Parameters
 T = 10                  # number of rounds for FL
-M = 400                 # number of learning iterations
-E = 2                   # number of epochs
+M = 1000                # number of learning iterations
+num_epochs = [3, 1]     # number of epochs
 batch_size = 50         # mini-batch size
-lr_du = 0.001           # learning rate for proposed preprocess
-mu = 0.01               # learning rate for ClientUpdate
+lr_du = 0.0005          # learning rate for proposed preprocessing
+mu = 0.01               # learning rate for ClientUpdate of FedAvg
 num_feature = 128       # dimension of hidden layers
-q = 1                   # parameter for DR-FedAvg
 
 # Fixed parameters
-K = 5                   # number of clients
-datalocation = './mnist/5clients_env1/'                     # data for env1
-N = sum([1042, 1023, 862, 1184, 4459])                      # number of all training data for env1
-# datalocation = './mnist/5clients_env2/'                     # data for env2
-# N = sum([6775, 6774, 6776, 6776, 6776])                     # number of all training data for env2
+K = 2                   # number of clients
+datalocation = './mnist/2clients/'
+N = sum([1760, 5739])                      # number of all training data for each client
 
 print("Set parameters", flush=True)
 
@@ -77,6 +74,7 @@ class TrainDUW(nn.Module):
     def __init__(self) -> None:
         super(TrainDUW, self).__init__()
         self.thetak = nn.ParameterList([nn.Parameter(torch.ones(T)*np.sqrt(len(train_datasets[i])/N)) for i in range(K)])
+        # self.thetak = nn.ParameterList([nn.Parameter(torch.tensor([0.5714, 0.2556, 0.1072, 0.3418, 0.3732])),nn.Parameter(torch.tensor([0.3661, 0.8103, 1.1095, 0.6747, 0.6268]))])
         # initial value: N_k/N
     def network(self, W1, b1, W2, b2, W3, b3, x):
         x = torch.relu(torch.matmul(x,W1.T)+b1.T)
@@ -103,7 +101,7 @@ class TrainDUW(nn.Module):
                 train_loader_node = torch.utils.data.DataLoader(dataset=train_datasets[node], batch_size=batch_size, shuffle=True)
                 outputvalues = []
                 targetvalues = []
-                for ep in range(E):
+                for ep in range(num_epochs[node]):
                     for (input, target) in train_loader_node:
                         input = input.view(-1, 28*28)
                         output = self.network(weight1,bias1,weight2,bias2,weight3,bias3,input)
@@ -161,7 +159,7 @@ def train(datasets,model,optimizer,loop,method,modelfortheta):
         Fk = [0. for _ in range(K)]
     for node in range(K):
         train_loader_node = torch.utils.data.DataLoader(dataset=datasets[node], batch_size=batch_size, shuffle=True)
-        for ep in range(E):
+        for ep in range(num_epochs[node]):
             for (input, target) in train_loader_node:
                 input = input.view(-1, 28*28)
                 optimizer[node].zero_grad()
@@ -220,8 +218,8 @@ def test(dataloaders,model):
 #%% Model Sharing
 model = Net()       # common initial model
 models = model_initialize(model)        # models for proposed DUW-FedAvg
-models2 = model_initialize(model)       # models for original FedAvg
-models3 = model_initialize(model)       # models for DR-FedAvg
+# models2 = model_initialize(model)       # models for original FedAvg
+# models3 = model_initialize(model)       # models for DR-FedAvg
 
 # initial model parameters
 aveW1 = model.l1.weight.data.clone().requires_grad_(False)
@@ -267,9 +265,28 @@ for loop in range(M):
         sumweights[itr] = sum([modelDU.thetak[x][itr].item()**2 for x in range(K)])
     for node in range(K):
         learnedweights[i,:,node] = modelDU.thetak[node].detach()**2 / sumweights
+    if loop%100==99:        # temporal outputs
+        fig = plt.figure()
+        plt.plot(outerloss)
+        plt.xlabel("iteration m", fontsize=16)
+        plt.ylabel("loss", fontsize=16)
+        plt.tick_params(labelsize=16)
+        plt.tight_layout()
+        fig.savefig("outerloss_du.png")
+        fig2 = plt.figure()
+        for node in range(K):
+            labelname = 'learned theta ' + str(node)
+            plt.plot([i for i in learnedweights[loop,:,node]], label=labelname)
+        plt.legend(fontsize=18)
+        plt.xlabel("round t", fontsize=16)
+        plt.ylabel("learned theta", fontsize=16)
+        plt.tick_params(labelsize=16)
+        plt.tight_layout()
+        fig2.savefig("learned_thetak.png")
+        print('Learned theta: ', learnedweights[loop,:,:], flush=True)
+        print('mean of weight variance: ', torch.mean(torch.std(learnedweights[loop,:,:],dim=0,unbiased=False)**2), flush=True)
 
 print("Deep unfolding done", flush=True)
-# print ('outerloss = ', outerloss, flush=True)
 
 #%% Figures
 # loss during deep unfolding
@@ -293,94 +310,4 @@ plt.tick_params(labelsize=16)
 plt.tight_layout()
 fig2.savefig("learned_thetak.png")
 print('Learned theta: ', learnedweights[M,:,:], flush=True)
-
-# trajectory of weight during deep unfolding
-fig3 = plt.figure()
-for itr in range(T):
-    labelname = 'round ' + str(itr)
-    plt.plot([i for i in learnedweights[:,itr,0]], label=labelname)     # trajectory of client 0's weight for each round
-plt.legend()
-plt.xlabel("iteration m", fontsize=16)
-plt.ylabel("theta0", fontsize=16)
-plt.tick_params(labelsize=16)
-plt.tight_layout()
-fig3.savefig("theta0.png")
-
-
-#%% Federated Learning
-# DUW-FedAvg
-optimizers = []
-for i in range(K):
-    optimizers.append(optim.SGD(models[i].parameters(), lr=mu))
-fl_loss = []
-fl_acc = []
-for loop in range(T):
-    loss = train(train_datasets,models,optimizers,loop,'du',modelDU)
-    fl_loss.append(loss)
-    acc = test(test_loaders,models)
-    fl_acc.append(acc)
-
-print("DUW-FedAvg done", flush=True)
-print ('DUW-FedAvg loss = ', fl_loss, flush=True)
-print ('DUW-FedAvg acc = ', fl_acc, flush=True)
-
-#%%
-# original FedAvg
-optimizers2 = []
-for i in range(K):
-    optimizers2.append(optim.SGD(models2[i].parameters(), lr=mu))
-fl2_loss = []
-fl2_acc = []
-for loop in range(T):
-    loss = train(train_datasets,models2,optimizers2,loop,'origin',modelDU)
-    fl2_loss.append(loss)
-    acc = test(test_loaders,models2)
-    fl2_acc.append(acc)
-
-print("original FedAvg done", flush=True)
-print ('original FedAvg loss = ', fl2_loss, flush=True)
-print ('original FedAvg acc = ', fl2_acc, flush=True)
-
-#%%
-# DR-FedAvg
-optimizers3 = []
-for i in range(K):
-    optimizers3.append(optim.SGD(models3[i].parameters(), lr=mu))
-
-# learning
-fl3_loss = []
-fl3_acc = []
-for loop in range(T):
-    loss = train(train_datasets,models3,optimizers3,loop,'dr',modelDU)
-    fl3_loss.append(loss)
-    acc = test(test_loaders,models3)
-    fl3_acc.append(acc)
-
-print("DR-FedAvg done", flush=True)
-print ('DR-FedAvg loss = ', fl3_loss, flush=True)
-print ('DR-FedAvg acc = ', fl3_acc, flush=True)
-
-
-#%%
-plt.figure()
-plt.plot(fl_loss, linewidth=3, marker="o", markersize=12, label="DUW-FedAvg")
-plt.plot(fl3_loss, linewidth=3, marker="x", markersize=12, label="DR-FedAvg")
-plt.plot(fl2_loss, linewidth=3, marker="+", markersize=12, label="FedAvg")
-plt.legend(fontsize=18)
-plt.xlabel("round t", fontsize=16)
-plt.ylabel("loss", fontsize=16)
-plt.tick_params(labelsize=16)
-plt.tight_layout()
-plt.savefig("flloss.png")
-
-#%%
-plt.figure()
-plt.plot(fl_acc, linewidth=3, marker="o", markersize=12, label="DUW-FedAvg")
-plt.plot(fl3_acc, linewidth=3, marker="x", markersize=12, label="DR-FedAvg")
-plt.plot(fl2_acc, linewidth=3, marker="+", markersize=12, label="FedAvg")
-plt.legend(fontsize=18)
-plt.xlabel("round t", fontsize=16)
-plt.ylabel("accuracy", fontsize=16)
-plt.tick_params(labelsize=16)
-plt.tight_layout()
-plt.savefig("flacc.png")
+print('mean of weight variance: ', torch.mean(torch.std(learnedweights[M,:,:],dim=0,unbiased=False)**2), flush=True)
