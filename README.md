@@ -1,7 +1,7 @@
 # DeepUnfolding-based-FL
 Python implementation of Deep Unfolding-based Weight Federated Averaging (DUW-FedAvg) / DUW-FedNova.
 
-''Deep unfolding-based weighted averaging for federated learning in heterogeneous environments,'' submitted to IEEE Open Journal of Signal Processing.
+''[Deep unfolding-based weighted averaging for federated learning in heterogeneous environments](https://arxiv.org/abs/2212.12191),'' submitted to IEEE Open Journal of Signal Processing.
 
 
 ## Requirements
